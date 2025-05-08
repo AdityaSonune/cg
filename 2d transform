@@ -1,0 +1,279 @@
+#include <iostream>
+#include <math.h>
+#include <time.h>
+#include <GL/glut.h>
+#include <vector>
+using namespace std;
+int edge;
+vector<int> xpoint;
+vector<int> ypoint;
+int ch;
+double round(double d){
+return floor(d + 0.5);
+}
+void init(){
+glClearColor(1.0, 1.0, 1.0, 0.0);
+glMatrixMode(GL_PROJECTION);
+gluOrtho2D(0, 640, 0, 480);
+glClear(GL_COLOR_BUFFER_BIT);
+}
+void translation(){
+int tx, ty;
+cout << "\t Enter Tx, Ty \n";
+cin >> tx >> ty;
+// Translate the point
+for (int i = 0; i < edge; i++){
+xpoint[i] = xpoint[i] + tx;
+ypoint[i] = ypoint[i] + ty;
+}
+glBegin(GL_POLYGON);
+glColor3f(0, 0, 1);
+for (int i = 0; i < edge; i++){
+glVertex2i(xpoint[i], ypoint[i]);
+}
+glEnd();
+glFlush();
+}void rotaion(){
+int cx, cy;
+cout << "\n Enter Ar point x , y ";
+cin >> cx >> cy;
+cx = cx + 320;
+cy = cy + 240;
+glColor3f(0.0, 1.0, 0.0);
+glBegin(GL_POINTS);
+glVertex2i(cx, cy);
+glEnd();
+glFlush();
+double the;
+cout << "\n Enter thetha ";
+cin >> the;
+the = the * 3.14 / 180;
+glColor3f(0, 0, 1.0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i(round(((xpoint[i] - cx) * cos(the) - ((ypoint[i] - cy) * sin(the))) +
+cx), round(((xpoint[i] - cx) * sin(the) + ((ypoint[i] - cy) * cos(the))) + cy));
+}
+glEnd();
+glFlush();
+}
+void scale(){
+glColor3f(1.0, 0, 0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i(xpoint[i] - 320, ypoint[i] - 240);
+}
+glEnd();
+glFlush();
+cout << "\n\tIn Scaling whole screen is 1st Qudrant \n";
+int sx, sy;
+cout << "\t Enter sx, sy \n";
+cin >> sx >> sy;// scale the point
+for (int i = 0; i < edge; i++){
+xpoint[i] = (xpoint[i] - 320) * sx;
+ypoint[i] = (ypoint[i] - 240) * sy;
+}
+glColor3f(0, 0, 1.0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i(xpoint[i], ypoint[i]);
+}
+glEnd();
+glFlush();
+}
+void reflection(){
+char reflection;
+cout << "Enter Reflection Axis \n";
+cin >> reflection;
+if (reflection == 'x' || reflection == 'X'){
+glColor3f(0.0, 0.0, 1.0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i(xpoint[i], (ypoint[i] * -1) + 480);
+}
+glEnd();
+glFlush();
+}
+else if (reflection == 'y' || reflection == 'Y'){
+glColor3f(0.0, 0.0, 1.0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i((xpoint[i] * -1) + 640, (ypoint[i]));
+}
+glEnd();
+glFlush();
+}
+}
+void Draw(){if (ch == 2 || ch == 3 || ch == 4){
+glColor3f(1.0, 0, 0);
+glBegin(GL_LINES);
+glVertex2i(0, 240);
+glVertex2i(640, 240);
+glEnd();
+glColor3f(1.0, 0, 0);
+glBegin(GL_LINES);
+glVertex2i(320, 0);
+glVertex2i(320, 480);
+glEnd();
+glFlush();
+glColor3f(1.0, 0, 0);
+glBegin(GL_POLYGON);
+for (int i = 0; i < edge; i++){
+glVertex2i(xpoint[i], ypoint[i]);
+}
+glEnd();
+glFlush();
+}
+if (ch == 1){
+scale();
+}
+else if (ch == 2){
+rotaion();
+}
+else if (ch == 3){
+reflection();
+}
+else if (ch == 4){
+translation();
+}
+}
+int main(int argc, char **argv){
+cout << "\n \t Enter 1) Scaling ";
+cout << "\n \t Enter 2) Rotation about arbitrary point";cout << "\n \t Enter 3) Reflection";
+cout << "\n \t Enter 4) Translation \n \t";
+cin >> ch;
+if (ch == 1 || ch == 2 || ch == 3 || ch == 4){
+cout << "Enter No of edges \n";
+cin >> edge;
+int xpointnew, ypointnew;
+cout << " Enter" << edge << " point of polygon \n";
+for (int i = 0; i < edge; i++){
+cout << "Enter " << i << " Point ";
+cin >> xpointnew >> ypointnew;
+xpoint.push_back(xpointnew + 320);
+ypoint.push_back(ypointnew + 240);
+}
+glutInit(&argc, argv);
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+glutInitWindowSize(640, 480);
+glutInitWindowPosition(200, 200);
+glutCreateWindow("2D");
+init();
+glutDisplayFunc(Draw);
+glutMainLoop();
+return 0;
+}
+else
+{
+cout << "\n \t Check Input run again";
+return 0;
+}
+}
+
+g++  -o filename filename.cpp -lGL -lGLU -lglut
+./filename
+
+AIM : IMPLEMENT FOLLOWING 2D TRANSFORMATIONS ON THE OBJECT WITH 
+RESPECT TO AXIS 
+a. Scaling b. Rotation about arbitrary point c. Reflection 
+ 
+ 
+It is a process of changing the angle of the object. Rotation can be clockwise or anticlockwise. For 
+rotation, we have to specify the angle of rotation and rotation point. Rotation point is also called a pivot 
+point. It is print about which object is rotated. 
+ 
+TYPES OF ROTATION: 
+ 
+1. Anticlockwise 
+2. Counterclockwise 
+ 
+The positive value of the pivot point (rotation angle) rotates an object in a counter-clockwise (anti- 
+clockwise) direction. 
+ 
+The negative value of the pivot point (rotation angle) rotates an object in a clockwise direction. 
+When the object is rotated, then every point of the object is rotated by the same angle. 
+Straight Line: Straight Line is rotated by the endpoints with the same angle and redrawing the line 
+between new endpoints. 
+ 
+Polygon: Polygon is rotated by shifting every vertex using the same rotational angle. 
+ 
+Curved Lines: Curved Lines are rotated by repositioning of all points and drawing of the curve at new 
+positions. 
+ 
+Circle: It can be obtained by center position by the specified angle. 
+ 
+Ellipse: Its rotation can be obtained by rotating major and minor axis of an ellipse by the desired angle. 
+ 
+Matrix for rotation is a clockwise direction. 
+Matrix for rotation is an anticlockwise direction. 
+Matrix for homogeneous co-ordinate rotation (clockwise) 
+Matrix for homogeneous co-ordinate rotation (anticlockwise) 
+Rotation about an arbitrary point: If we want to rotate an object or point about an arbitrary point, 
+first of all, we translate the point about which we want to rotate to the origin. Then rotate point or object 
+about the origin, and at the end, we again translate it to the original place. We get rotation about an 
+arbitrary point. 
+ 
+OBJECTIVE : 
+Example: The point (x, y) is to be rotated 
+ 
+The (xc yc) is a point about which counterclockwise rotation is done 
+ 
+Step1: Translate point (xc yc) to origin 
+ 
+Step2: Rotation of (x, y) about the origin 
+ 
+Step3: Translation of center of rotation back to its original position 
+ 
+Example1: Prove that 2D rotations about the origin are commutative i.e. R1 R2=R2 R1. 
+ 
+Solution: R1 and R2are rotation matrices 
+ 
+Example2: Rotate a line CD whose endpoints are (3, 4) and (12, 15) about origin through a 45° 
+anticlockwise direction. 
+ 
+Solution: The point C (3, 4) 
+ 
+Example3: Rotate line AB whose endpoints are A (2, 5) and B (6, 12) about origin through a 30° 
+clockwise direction. 
+ 
+Solution: For rotation in the clockwise direction. The matrix is 
+ 
+Step1: Rotation of point A (2, 5). Take angle 30° 
+ 
+Step2: Rotation of point B (6, 12)  
+Composite Transformation: 
+ 
+A number of transformations or sequence of transformations can be combined into single one called as 
+composition. The resulting matrix is called as composite matrix. The process of combining is called as 
+concatenation. 
+ 
+Suppose we want to perform rotation about an arbitrary point, then we can perform it by the sequence 
+of three transformations 
+ 
+1. Translation 
+2. Rotation 
+3. Reverse Translation 
+ 
+The ordering sequence of these numbers of transformations must not be changed. If a matrix is 
+represented in column form, then the composite transformation is performed by multiplying matrix in 
+order from right to left side. The output obtained from the previous matrix is multiplied with the new 
+coming matrix. 
+ 
+Example showing composite transformations: 
+ 
+The enlargement is with respect to center. For this following sequence of transformations will be 
+performed and all will be combined to a single one 
+ 
+Step1: The object is kept at its position as in fig (a) 
+ 
+V 
+Step2: The object is translated so that its center coincides with the origin as in fig (b) 
+ 
+Step3: Scaling of an object by keeping the object at origin is done in fig (c) 
+ 
+Step4: Again translation is done. This second translation is called a reverse translation. It will position 
+the object at the origin location. 
+ 
+Above transformation can be represented as TV.ST -1 
+
+CONCLUSION : I studied 2d Composite transformation having 2D Translation Scaling, Rotation.
